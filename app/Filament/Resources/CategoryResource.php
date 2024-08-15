@@ -6,14 +6,17 @@ use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Section;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 
 
@@ -27,21 +30,36 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('categories')  // Ensure this is the Forms Section component
-                ->schema([
-                    Forms\Components\Grid::make()  // Assuming you've aliased Forms\Components\Grid as FormsGrid
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required(),
-                        Forms\Components\TextInput::make('slug')
-                            ->required(),
-                        Forms\Components\Textarea::make('image')
-                            ->columnSpanFull(),
-                        Forms\Components\Toggle::make('is_active')
-                            ->required(),
+                    Section::make([  //Ensure this is the Forms Section component
+                        Grid::make()  // Assuming you've aliased Forms\Components\Grid as FormsGrid
+                            ->schema([
+                            Forms\Components\TextInput::make('name')
+                            ->maxLength(255)
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(fn (string $operation, $state, \Filament\Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+
+                            Forms\Components\TextInput::make('slug')
+                            ->maxLength(255)
+                            ->required()
+                            ->live()
+                            ->disabled()
+                            ->dehydrated()
+                            ->unique(Category::class, 'slug', ignoreRecord: true),
+                            ]),
+
+                            FileUpload::make('image')
+                            ->image()
+                            ->directory('categories'),
+                            Toggle::make('is_active')
+                            ->required()
+                            ->default(true),
+
+
+
+
                     ]),
-                ]),
-            ]);
+                ]);
     }
 
         public static function table(Table $table): Table
