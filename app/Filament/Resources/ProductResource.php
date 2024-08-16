@@ -12,9 +12,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
+
 
 class ProductResource extends Resource
 {
@@ -29,47 +32,42 @@ class ProductResource extends Resource
                 Forms\Components\Group::make()->schema([
                     Forms\Components\Section::make('Product Information')
                         ->schema([
-                            Forms\Components\TextInput::make('category_id')
-                                ->required()
-                                ->numeric(),
-                            Forms\Components\TextInput::make('brand_id')
-                                ->required()
-                                ->numeric(),
                             Forms\Components\TextInput::make('name')
                                 ->maxLength(255)
                                 ->label('Product Name')
-                                ->required(),
+                                ->required()
+                                ->label('The is a sentence')
+                                ->live(onBlur: true)
+                                ->afterStateUpdated(function(string $operation, $state, \Filament\Forms\Set $set){
+                                    if($operation !== 'create'){
+                                        return;
+                                    }
+                                    $set('slug', Str::slug($state));
+                                }),
                             Forms\Components\TextInput::make('slug')
                                 ->maxLength(255)
                                 ->required()
                                 ->live()
                                 ->disabled()
                                 ->prefix('https://')
-                                ->label('Slug URL')
+                                ->label('The is a sentence')
                                 ->dehydrated()
                                 ->unique(Product::class, 'slug', ignoreRecord: true),
-                            Forms\Components\Textarea::make('images')
-                                ->columnSpan('full'),
                             Forms\Components\MarkdownEditor::make('description')
                                 ->label('Product Description')
                                 ->fileAttachmentsDirectory('products')
                                 ->columnSpan('full'),
-                            Forms\Components\TextInput::make('price')
-                                ->required()
-                                ->numeric()
-                                ->default(0)
-                                ->prefix('$'),
-                            Forms\Components\Toggle::make('is_active')
-                                ->required(),
-                            Forms\Components\Toggle::make('is_featured')
-                                ->required(),
-                            Forms\Components\Toggle::make('in_stock')
-                                ->required(),
-                            Forms\Components\Toggle::make('on_sale')
-                                ->required(),
+                            Forms\Components\Section::make('Images')
+                                ->schema([
+                                    Forms\Components\FileUpload::make('images')
+                                        ->multiple()
+                                        ->directory('products')
+                                        ->maxFiles(5)
+                                        ->reorderable(),
+                                ])->collapsible(),
                         ])
                         ->collapsible()
-                        ->collapsed(true)
+                        ->collapsed(false)
                         ->columns(2)  // This section uses two columns of the parent group
                 ])->columnSpan(2),  // This group spans two out of three columns in the form
                 // This group will also span one column and contains the Price section.
@@ -82,13 +80,29 @@ class ProductResource extends Resource
                                 ->prefix('$')
                                 ->label('Product Price'),
                         ])->collapsible(),
-                    Forms\Components\Section::make('Images')
+                    Forms\Components\Section::make('Associations')
                         ->schema([
-                            Forms\Components\FileUpload::make('images')
-                                ->multiple()
-                                ->directory('products')
-                                ->maxFiles(5)
-                                ->reorderable(),
+                            Forms\Components\Select::make('category_id')
+                                ->required()
+                                ->searchable()
+                                ->preload()
+                                ->relationship('category', 'name'),
+                            Forms\Components\Select::make('brand_id')
+                                ->required()
+                                ->searchable()
+                                ->preload()
+                                ->relationship('brand', 'name'),
+                            // Buttons
+                            Forms\Components\Toggle::make('in_stock')
+                                ->required()
+                                ->default(true),
+                            Forms\Components\Toggle::make('is_active')
+                                ->required()
+                                ->default(true),
+                            Forms\Components\Toggle::make('is_featured')
+                                ->required(),
+                            Forms\Components\Toggle::make('on_sale')
+                                ->required(),
                         ])->collapsible(),
                 ]),
             ])
@@ -131,9 +145,17 @@ class ProductResource extends Resource
             ])
             ->filters([
                 // Filters can be defined here
+                SelectFilter::make('category')
+                    ->relationship('category', 'name'),
+                SelectFilter::make('brand')
+                    ->relationship('brand', 'name'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
