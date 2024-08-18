@@ -4,7 +4,9 @@ namespace App\Filament\Resources\Store;
 
 use App\Filament\Resources\Store;
 use App\Models\Store\Order;
+use App\Models\Store\Product;
 use Filament\Forms;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
@@ -123,38 +125,49 @@ class OrderResource extends Resource
                             ->columnSpanFull(),
 
                     // repeater section
-                    Section::make('order items')->schema([
-                        Repeater::make('items')
-                        ->relationship()
-                        ->Schema([
-                            Select::make('Product_id')
-                                ->relationship('product', 'name')
-                                ->searchable()
-                                ->preload()
-                                ->required()
-                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                ->distinct()
-                                ->columnSpan(4)
-                                ->reactive()
-                                ->afterStateUpdated(fn($state, Set $set) => $set('unit', 'Unit_price')),
-                            TextInput::make('quantity')
-                                ->numeric()
-                                ->required()
-                                ->default(1)
-                                ->minValue(1)
-                                ->columnSpan(2),
-                            TextInput::make('unit_amount')
-                                ->numeric()
-                                ->required()
-                                ->default(1)
-                                ->disabled()
-                                ->columnSpan(3),
-                            TextInput::make('total_amount')
-                                ->numeric()
-                                ->required()
-                                ->afterStateUpdated(fn($state, Set $set) => $set('unit', 'Unit_price'))
-                                ->columnSpan(3),
-                            ])->columns(12)
+                        Section::make('order items')->schema([
+                            Repeater::make('items')
+                                ->relationship()
+                                ->schema([
+                                    Select::make('product_id')
+                                        ->relationship('product', 'name')
+                                        ->searchable()
+                                        ->preload()
+                                        ->required()
+                                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                        ->distinct()
+                                        ->columnSpan(5)
+                                        ->reactive()
+                                        ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                            $product = Product::find($state);
+                                            $unitAmount = $product?->price ?? 0;
+                                            $set('unit_amount', $unitAmount);
+                                            $quantity = $get('quantity') ?? 1;
+                                            $set('total_amount', $unitAmount * $quantity);
+                                        }),
+                                    TextInput::make('quantity')
+                                        ->numeric()
+                                        ->required()
+                                        ->default(1)
+                                        ->minValue(1)
+                                        ->columnSpan(1)
+                                        ->reactive()
+                                        ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                            $unitAmount = $get('unit_amount') ?? 0;
+                                            $set('total_amount', $unitAmount * $state);
+                                        }),
+                                    TextInput::make('unit_amount')
+                                        ->numeric()
+                                        ->required()
+                                        ->default(1)
+                                        ->disabled()
+                                        ->columnSpan(3),
+                                    TextInput::make('total_amount')
+                                        ->numeric()
+                                        ->required()
+                                        ->disabled()
+                                        ->columnSpan(3),
+                                ])->columns(12)
                         ])
                     ])->columns(2),
                 ])->columnSpanFull(),
@@ -200,8 +213,10 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->slideOver(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
