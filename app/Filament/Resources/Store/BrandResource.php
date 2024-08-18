@@ -69,7 +69,7 @@ class BrandResource extends Resource
                 Tables\Columns\ImageColumn::make('image')
                     ->square(),
                 Tables\Columns\TextColumn::make('name')
-                    ->description("This is a descrtiption")
+                    ->description("This is a description")
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')

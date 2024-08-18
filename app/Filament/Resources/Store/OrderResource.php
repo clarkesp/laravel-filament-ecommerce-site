@@ -120,7 +120,12 @@ class OrderResource extends Resource
                                 ->distinct()
                                 ->columnSpan(4)
                                 ->reactive()
-                                ->afterStateUpdated(fn($state, Set $set) => $set('unit')),
+                                ->afterStateUpdated(function ($state, $form) {
+                                    // Assuming you need to set another form field based on this
+                                    $form->fill([
+                                        'unit_amount' => $this->calculateUnitAmount($state),
+                                    ]);
+                                }),
                             Forms\Components\TextInput::make('quantity')
                                 ->numeric()
                                 ->required()
@@ -133,7 +138,7 @@ class OrderResource extends Resource
                                 ->default(1)
                                 ->disabled()
                                 ->columnSpan(3),
-                            Forms\Components\TextInput::make('grand_total')
+                            Forms\Components\TextInput::make('total_amount')
                                 ->numeric()
                                 ->required()
                                 ->columnSpan(3),
@@ -196,7 +201,7 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            Store\CategoryResource\RelationManagers\AddressRelationManager::class
         ];
     }
 
