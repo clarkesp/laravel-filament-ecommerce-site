@@ -8,6 +8,13 @@ use Filament\Forms;
 use Filament\Forms\Set;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
@@ -19,30 +26,34 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()->schema([
-                    Forms\Components\Section::make('Order Information')->schema([
-                        Forms\Components\Select::make('user_id')
+                Group::make()->schema([
+                    Section::make('Order Information')->schema([
+                        Select::make('user_id')
                             ->label('Customer')
+                            ->default('Choose Client or Customer')
                             ->relationship('user', 'name') // Use 'user' instead of 'customer'
                             ->searchable()
                             ->preload()
                             ->required(),
-                        Forms\Components\Select::make('payment_method')
+                        Select::make('payment_method')
                             ->options([
                                 'pix' => 'PIX',
+                                'cash' => 'Cash',
                                 'boleto' => 'Boleto',
                                 'creditcard' => 'Credit Card',
                                 'debitcard' => 'Debit Card',
                                 'stripe' => 'Stripe',
                                 'paypal' => 'PayPal',
-                            ])->required(),
-                        Forms\Components\ToggleButtons::make('payment_status')
+                            ])
+                            ->default('pix')
+                            ->required(),
+                        ToggleButtons::make('payment_status')
                             ->inline()
                             ->default('pending')
                             ->required()
@@ -59,7 +70,7 @@ class OrderResource extends Resource
                                 'paid' => 'heroicon-m-check-badge',
                                 'failed' => 'heroicon-m-x-circle',
                             ]),
-                        Forms\Components\ToggleButtons::make('status')
+                        ToggleButtons::make('status')
                             ->inline()
                             ->label('Delivery Status')
                             ->default('new')
@@ -83,7 +94,7 @@ class OrderResource extends Resource
                                 'delivered' => 'heroicon-m-check-badge',
                                 'cancelled' => 'heroicon-m-x-circle',
                             ]),
-                        Forms\Components\Select::make('currency')
+                        Select::make('currency')
                                 ->options([
                                     'usd' => 'USD',
                                     'brl' => 'BRL',
@@ -91,27 +102,32 @@ class OrderResource extends Resource
                                     'eur' => 'EUR',
                                     'cad' => 'CAD',
                                     'ukr' => 'UKR',
-                                ]),
-                        Forms\Components\Select::make('delivery_method')
+                                ])
+                                ->default('brl'),
+                        Select::make('delivery_method')
                                 ->options([
-                                    'instoresale' => 'In store sale',
+                                    'instore' => 'In store sale',
                                     'pickup' => 'Pick Up',
                                     'bymail' => 'By Mail',
                                     'bycourier' => 'By courier',
                                     'airmail' => 'Airmail',
-                                ]),
+                                ])
+                                ->default('instore'),
 
-                        Forms\Components\Textarea::make('delivery_amount')
+                        Textarea::make('delivery_amount')
                             ->default(0),
-                        Forms\Components\MarkdownEditor::make('note')
+                        RichEditor::make('note')->toolbarButtons([
+                            'blockquote', 'bold', 'bulletList', 'codeBlock', 'heading', 'italic', 'link',
+                            'orderedList', 'table', 'blockquote', 'bold', 'h2', 'h3', 'italic', 'link', 'underline'])
+                            ->label('Notes about the purchase')
                             ->columnSpanFull(),
 
                     // repeater section
-                    Forms\Components\Section::make('order items')->schema([
+                    Section::make('order items')->schema([
                         Repeater::make('items')
                         ->relationship()
                         ->Schema([
-                            Forms\Components\Select::make('Product_id')
+                            Select::make('Product_id')
                                 ->relationship('product', 'name')
                                 ->searchable()
                                 ->preload()
@@ -120,27 +136,23 @@ class OrderResource extends Resource
                                 ->distinct()
                                 ->columnSpan(4)
                                 ->reactive()
-                                ->afterStateUpdated(function ($state, $form) {
-                                    // Assuming you need to set another form field based on this
-                                    $form->fill([
-                                        'unit_amount' => $this->calculateUnitAmount($state),
-                                    ]);
-                                }),
-                            Forms\Components\TextInput::make('quantity')
+                                ->afterStateUpdated(fn($state, Set $set) => $set('unit', 'Unit_price')),
+                            TextInput::make('quantity')
                                 ->numeric()
                                 ->required()
                                 ->default(1)
                                 ->minValue(1)
                                 ->columnSpan(2),
-                            Forms\Components\TextInput::make('unit_amount')
+                            TextInput::make('unit_amount')
                                 ->numeric()
                                 ->required()
                                 ->default(1)
                                 ->disabled()
                                 ->columnSpan(3),
-                            Forms\Components\TextInput::make('total_amount')
+                            TextInput::make('total_amount')
                                 ->numeric()
                                 ->required()
+                                ->afterStateUpdated(fn($state, Set $set) => $set('unit', 'Unit_price'))
                                 ->columnSpan(3),
                             ])->columns(12)
                         ])
