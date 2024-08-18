@@ -9,9 +9,11 @@ use Filament\Forms;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\RichEditor;
@@ -22,6 +24,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Number;
 
 
 class OrderResource extends Resource
@@ -106,7 +109,7 @@ class OrderResource extends Resource
                                     'ukr' => 'UKR',
                                 ])
                                 ->default('brl'),
-                        Select::make('delivery_method')
+                        Select::make('shipping_method')
                                 ->options([
                                     'instore' => 'In store sale',
                                     'pickup' => 'Pick Up',
@@ -116,7 +119,7 @@ class OrderResource extends Resource
                                 ])
                                 ->default('instore'),
 
-                        Textarea::make('delivery_amount')
+                        Textarea::make('shipping_amount')
                             ->default(0),
                         RichEditor::make('note')->toolbarButtons([
                             'blockquote', 'bold', 'bulletList', 'codeBlock', 'heading', 'italic', 'link',
@@ -136,7 +139,7 @@ class OrderResource extends Resource
                                         ->required()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->distinct()
-                                        ->columnSpan(5)
+                                        ->columnSpan(7)
                                         ->reactive()
                                         ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                             $product = Product::find($state);
@@ -161,13 +164,32 @@ class OrderResource extends Resource
                                         ->required()
                                         ->default(1)
                                         ->disabled()
-                                        ->columnSpan(3),
+                                        ->dehydrated()
+                                        ->columnSpan(2),
                                     TextInput::make('total_amount')
                                         ->numeric()
                                         ->required()
                                         ->disabled()
-                                        ->columnSpan(3),
-                                ])->columns(12)
+                                        ->dehydrated()
+                                        ->columnSpan(2),
+                                ])->columns(12),
+
+                                    Placeholder::make('grand_total_placeholder')
+                                        ->label('Grand Total')
+                                        ->content(function (Get $get, Set $set) {
+                                            $total = 0;
+                                            if(!$repeaters = $get('items')) {
+                                                return $total;
+                                            }
+                                            foreach ($repeaters as $key => $repeater) {
+                                                $total += $get("items.{$key}.total_amount");
+                                            }
+                                            $set('grand_total', $total);
+                                            return Number::currency($total, 'brl');
+                                        }),
+
+                                    Hidden::make('grand_total')
+                                        ->default(0),
                         ])
                     ])->columns(2),
                 ])->columnSpanFull(),
@@ -184,7 +206,7 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('user_id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('grand_total')
+                Tables\Columns\TextColumn::make('total_amount')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_method')
@@ -195,10 +217,10 @@ class OrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('currency')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('delivery_amount')
+                Tables\Columns\TextColumn::make('shipping_amount')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('delivery_method')
+                Tables\Columns\TextColumn::make('shipping_method')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
