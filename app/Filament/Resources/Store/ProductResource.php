@@ -12,7 +12,9 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Static_;
 
 
 class ProductResource extends Resource
@@ -161,6 +163,19 @@ class ProductResource extends Resource
                 ]),
             ]);
     }
+    public static function getNavigationBadge(): ?string {
+        /** @var Model|string $model */
+        $model = static::getModel();
+        if ($model) {
+            return (string) $model::count();
+        }
+        return null;
+    }
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return static::getModel()::count() > 0 ? 'success' : 'danger';
+    }
+
 
     public static function getRelations(): array
     {

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Store;
 
 use App\Filament\Resources\Store;
+use App\Filament\Resources\Store\CategoryResource\RelationManagers\AddressRelationManager;
 use App\Models\Store\Order;
 use App\Models\Store\Product;
 use Filament\Forms;
@@ -23,7 +24,14 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
 
 
@@ -187,7 +195,6 @@ class OrderResource extends Resource
                                             $set('grand_total', $total);
                                             return Number::currency($total, 'brl');
                                         }),
-
                                     Hidden::make('grand_total')
                                         ->default(0),
                         ])
@@ -203,30 +210,51 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user_id')
+                TextColumn::make('user_id')
+                    ->label('Customer')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_amount')
+                TextColumn::make('grand_total')
+                    ->numeric()
+                    ->sortable()
+                    ->money('BRL'),
+                TextColumn::make('payment_method')
+                    ->searchable(),
+
+                TextColumn::make('currency')
+                    ->label("$")
+                    ->sortable()
+                    ->searchable(),
+                SelectColumn::make('payment_status')
+                    ->label('Pay Status')
+                    ->searchable()
+                    ->sortable()
+                    ->options([
+                        'pending' => 'Pending',
+                        'paid' => 'Paid',
+                        'failed' => 'Failed',
+                    ]),
+                TextColumn::make('shipping_method')
+                    ->label('Method')
+                    ->searchable(),
+                TextColumn::make('shipping_amount')
+                    ->label('Delivery Cost')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('payment_method')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('payment_status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('currency')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('shipping_amount')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('shipping_method')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                SelectColumn::make('status')
+                    ->label('Delivery Status')
+                    ->options([
+                        'new' => 'New',
+                        'processing' => 'Processing',
+                        'shipped' => 'Shipped',
+                        'delivered' => 'Delivered',
+                        'cancelled' => 'Cancelled',
+                    ])->searchable()->sortable(),
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -235,14 +263,12 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->slideOver(),
-                Tables\Actions\EditAction::make()
-                    ->slideOver(),
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -250,10 +276,26 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            Store\CategoryResource\RelationManagers\AddressRelationManager::class
+            AddressRelationManager::class
         ];
     }
 
+    /**
+     * @return string|null The navigation badge (count of records).
+     */
+    public static function getNavigationBadge(): ?string {
+        /** @var Model|string $model */
+        $model = static::getModel();
+        if ($model) {
+            return (string) $model::count();
+        }
+        return null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return static::getModel()::count() > 0 ? 'success' : 'danger';
+    }
     public static function getPages(): array
     {
         return [
