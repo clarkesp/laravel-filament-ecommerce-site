@@ -29,6 +29,7 @@ class AppPanelProvider extends PanelProvider
             ->login()
             ->registration()
             ->passwordReset()
+            ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Red,
                 'grey'    => Color::Slate,

@@ -210,6 +210,17 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
+                SelectColumn::make('payment_status')
+                    ->label('Pay Status')
+                    ->searchable()
+                    ->sortable()
+                    ->options([
+                        'pending' => 'Pending',
+                        'paid' => 'Paid',
+                        'failed' => 'Failed',
+                    ]),
+                TextColumn::make('payment_method')
+                    ->searchable(),
                 TextColumn::make('user_id')
                     ->label('Customer')
                     ->numeric()
@@ -218,9 +229,6 @@ class OrderResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->money('BRL'),
-                TextColumn::make('payment_method')
-                    ->searchable(),
-
                 TextColumn::make('currency')
                     ->label("$")
                     ->sortable()

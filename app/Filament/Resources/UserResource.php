@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserResource extends Resource
@@ -89,6 +90,19 @@ class UserResource extends Resource
         return [
             //
         ];
+    }
+    public static function getNavigationBadge(): ?string {
+        /** @var Model|string $model */
+        $model = static::getModel();
+        if ($model) {
+            return (string) $model::count();
+        }
+        return null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return static::getModel()::count() > 0 ? 'success' : 'danger';
     }
 
     public static function getPages(): array
