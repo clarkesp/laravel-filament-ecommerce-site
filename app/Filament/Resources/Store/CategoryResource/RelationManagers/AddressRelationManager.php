@@ -3,9 +3,13 @@
 namespace App\Filament\Resources\Store\CategoryResource\RelationManagers;
 
 use Filament\Forms;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -18,9 +22,23 @@ class AddressRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('street_address')
-                    ->required()
+                TextInput::make('first_name')
                     ->maxLength(255),
+                TextInput::make('last_name')
+                    ->maxLength(255),
+                TextInput::make('phone')
+                    ->maxLength(25),
+                TextInput::make('whatsapp')
+                    ->maxLength(25),
+                TextInput::make('city')
+                    ->maxLength(255),
+                TextInput::make('state')
+                    ->maxLength(255),
+                TextInput::make('zip_code')
+                    ->maxLength(20),
+                TextArea::make('street_address')
+                    ->maxLength(255)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -29,7 +47,16 @@ class AddressRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('street_address')
             ->columns([
-                Tables\Columns\TextColumn::make('street_address'),
+                ImageColumn::make('avatar')->defaultImageUrl(url('https://tecdn.b-cdn.net/img/new/avatars/2.webp'))->circular(),
+                TextColumn::make('first_name'),
+                TextColumn::make('last_name'),
+                TextColumn::make('phone'),
+                TextColumn::make('whatsapp'),
+                TextColumn::make('city'),
+                TextColumn::make('state'),
+                TextColumn::make('zip_code'),
+                TextColumn::make('street_address'),
+                TextColumn::make('street_address'),
             ])
             ->filters([
                 //
