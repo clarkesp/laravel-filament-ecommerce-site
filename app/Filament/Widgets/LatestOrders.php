@@ -16,7 +16,7 @@ use Illuminate\Contracts\View\View;
 class LatestOrders extends BaseWidget
 {
     protected  int | string | array $columnSpan = 'full';
-
+//    protected static ?int $sort = 2; // This puts the stats on top of the table
     public function table(Table $table): Table
     {
         return $table
@@ -84,7 +84,8 @@ class LatestOrders extends BaseWidget
                     ->dateTime(),
             ])->actions([
                 Action::make('View Order')
-                ->url(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record])),
+                ->url(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record]))
+                ->icon('heroicon-s-eye'),
             ]);
     }
 }
