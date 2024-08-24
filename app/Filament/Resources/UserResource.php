@@ -63,9 +63,11 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->sortable()
+                    ->dateTime()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
+                    ->dateTime()
                     ->searchable(),
             ])
             ->filters([
@@ -88,7 +90,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\OrdersRelationManager::class
         ];
     }
     public static function getNavigationBadge(): ?string {
