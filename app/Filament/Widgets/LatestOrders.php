@@ -3,15 +3,20 @@
 namespace App\Filament\Widgets;
 
 use App\Filament\Resources\Store\OrderResource;
+use App\Models\Store\Order;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Contracts\View\View;
 
 class LatestOrders extends BaseWidget
 {
+    protected  int | string | array $columnSpan = 'full';
+
     public function table(Table $table): Table
     {
         return $table
@@ -22,6 +27,8 @@ class LatestOrders extends BaseWidget
                 TextColumn::make('id')
                     ->label('ID')
                     ->searchable(),
+                TextColumn::make('user.name')
+                ->searchable(),
                 ImageColumn::make('image')
                     ->defaultImageUrl(url('https://tecdn.b-cdn.net/img/new/avatars/2.webp'))
                     ->circular(),
@@ -75,6 +82,9 @@ class LatestOrders extends BaseWidget
                 TextColumn::make('updated_at')
                     ->label('If Updated')
                     ->dateTime(),
+            ])->actions([
+                Action::make('View Order')
+                ->url(fn (Order $record): string => OrderResource::getUrl('view', ['record' => $record])),
             ]);
     }
 }
