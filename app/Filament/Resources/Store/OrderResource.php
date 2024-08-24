@@ -54,7 +54,11 @@ class OrderResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
-                        Select::make('payment_method')
+                        ToggleButtons::make('payment_method')
+                            ->inline()
+                            ->default('pix')
+                            ->required()
+                            ->required()
                             ->options([
                                 'pix' => 'PIX',
                                 'cash' => 'Cash',
@@ -63,9 +67,15 @@ class OrderResource extends Resource
                                 'debitcard' => 'Debit Card',
                                 'stripe' => 'Stripe',
                                 'paypal' => 'PayPal',
-                            ])
-                            ->default('pix')
-                            ->required(),
+                            ])->colors([
+                                'pix' => Color::Green,
+                                'cash' => Color::Emerald,
+                                'boleto' => Color::Blue,
+                                'creditcard' => Color::Sky,
+                                'debitcard' => Color::Orange,
+                                'stripe' => Color::Fuchsia,
+                                'paypal' => Color::Violet,
+                            ]),
                         ToggleButtons::make('payment_status')
                             ->inline()
                             ->default('pending')
@@ -95,9 +105,9 @@ class OrderResource extends Resource
                                 'delivered' => 'Delivered',
                                 'cancelled' => 'Cancelled',
                             ])->colors([
-                                'new' => Color::Indigo,
+                                'new' => Color::Emerald,
                                 'processing' => Color::Amber,
-                                'shipped' => Color::Amber,
+                                'shipped' => Color::Blue,
                                 'delivered' => Color::Green,
                                 'cancelled' => Color::Red,
                             ])->icons([
