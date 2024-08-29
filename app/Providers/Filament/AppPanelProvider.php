@@ -31,8 +31,9 @@ class AppPanelProvider extends PanelProvider
             ->registration()
             ->passwordReset()
             ->sidebarCollapsibleOnDesktop()
+            ->viteTheme('resources/css/filament/app/theme.css')
             ->colors([
-                'primary' => Color::Red,
+                'primary' => Color::Blue,
                 'grey'    => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

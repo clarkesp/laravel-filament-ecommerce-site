@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
-
+    protected static ?int $navigationSort = 3;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     public static function form(Form $form): Form
@@ -95,9 +95,10 @@ class CategoryResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])
 
