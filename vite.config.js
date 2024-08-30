@@ -6,13 +6,12 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/css/filament/app/theme.css'
+                'resources/js/app.js',  // Ensure these are correct
             ],
             refresh: [
-                ...refreshPaths,
+                'resources/views/**/*.blade.php',
                 'app/Livewire/**',
             ],
         }),
     ],
-})
+});

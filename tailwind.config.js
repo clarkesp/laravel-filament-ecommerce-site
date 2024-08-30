@@ -1,4 +1,4 @@
-import preset from './vendor/filament/support/tailwind.config.preset'
+import preset from './vendor/filament/support/tailwind.config.preset';
 
 export default {
     presets: [preset],
@@ -9,9 +9,9 @@ export default {
         'node_modules/preline/dist/*.js',
     ],
     theme: {
-        extend: {}
-    }
-,    plugins: [
-        require('preline/plugin'),
+        extend: {},
+    },
+    plugins: [
+        require('preline/plugin'), // Ensure this is correctly placed
     ],
-}
+};
