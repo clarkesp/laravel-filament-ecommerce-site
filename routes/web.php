@@ -19,6 +19,8 @@ use App\Livewire\HomePage;
 //Route::get('/', function () {
 //    return view('welcome');
 //});
+Route::get('/sick', function () {return view('sick');});
+Route::get('/sick2', function () {return view('sick2');});
 
 Route::get('/', HomePage::class);
 Route::get('/categories', CategoriesPage::class);

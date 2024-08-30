@@ -111,6 +111,7 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('images'),
                 Tables\Columns\TextColumn::make('category_id')
                     ->numeric()
                     ->sortable(),

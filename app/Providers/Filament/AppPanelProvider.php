@@ -31,6 +31,7 @@ class AppPanelProvider extends PanelProvider
             ->registration()
             ->passwordReset()
             ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth('full')
             ->viteTheme('resources/css/filament/app/theme.css')
             ->colors([
                 'primary' => Color::Blue,
