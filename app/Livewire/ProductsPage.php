@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Store\Brand;
+use App\Models\Store\Category;
 use App\Models\Store\Product;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -17,7 +18,8 @@ class ProductsPage extends Component
         $productQuery = Product::query()->where('is_active', 1);
         return view('livewire.products-page', [
         'products' => $productQuery->paginate(6),
-        'brands' => Brand::where('is_active', 1)->get('i),
+        'brands' => Brand::where('is_active', 1)->get(['id', 'name', 'slug']),
+        'categories' => Category::where('is_active', 1)->get(['id', 'name', 'slug']),
         ]);
     }
 }

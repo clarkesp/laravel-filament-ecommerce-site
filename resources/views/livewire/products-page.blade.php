@@ -4,71 +4,56 @@
             <div class="px-4 py-4 mx-auto max-w-7xl lg:py-6 md:px-6">
                 <div class="flex flex-wrap mb-24 -mx-3">
                     <div class="w-full pr-2 lg:w-1/4 lg:block">
+
+
+
+
+                        {{-- categories --}}
                         <div class="p-4 mb-5 bg-white border border-gray-200 dark:border-gray-900 dark:bg-gray-900">
                             <h2 class="text-2xl font-bold dark:text-gray-400"> Categories</h2>
                             <div class="w-16 pb-2 mb-6 border-b border-rose-600 dark:border-gray-400"></div>
                             <ul>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-400 ">
-                                        <input type="checkbox" class="w-4 h-4 mr-2">
-                                        <span class="text-lg">Smartphones</span>
-                                    </label>
-                                </li>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-400 ">
-                                        <input type="checkbox" class="w-4 h-4 mr-2 ">
-                                        <span class="text-lg">Laptops</span>
-                                    </label>
-                                </li>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-400">
-                                        <input type="checkbox" class="w-4 h-4 mr-2">
-                                        <span class="text-lg">Smartwatches</span>
-                                    </label>
-                                </li>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-400">
-                                        <input type="checkbox" class="w-4 h-4 mr-2">
-                                        <span class="text-lg">Television</span>
-                                    </label>
-                                </li>
+                                @foreach( $categories as $category )
+                                    <ul> <li class="mb-4" wire:key="{{ $category->id }}">
+                                            <label for="{{ $category->slug }}" class="flex items-center dark:text-gray-400 ">
+                                                <input type="checkbox" id="{{ $category->slug }}" value="{{ $category->id }}" class="w-4 h-4 mr-2">
+                                                <span class="text-lg">{{ $category->name }}</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                @endforeach
                             </ul>
 
                         </div>
+                    {{-- BRANDS --}}
                         <div class="p-4 mb-5 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-900">
                             <h2 class="text-2xl font-bold dark:text-gray-400">Brand</h2>
                             <div class="w-16 pb-2 mb-6 border-b border-rose-600 dark:border-gray-400"></div>
                             <ul>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-300">
-                                        <input type="checkbox" class="w-4 h-4 mr-2">
-                                        <span class="text-lg dark:text-gray-400">Apple</span>
-                                    </label>
-                                </li>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-300">
-                                        <input type="checkbox" class="w-4 h-4 mr-2">
-                                        <span class="text-lg dark:text-gray-400">Samsung</span>
-                                    </label>
-                                </li>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-300">
-                                        <input type="checkbox" class="w-4 h-4 mr-2">
-                                        <span class="text-lg dark:text-gray-400">Nothing</span>
-                                    </label>
-                                </li>
-                                <li class="mb-4">
-                                    <label for="" class="flex items-center dark:text-gray-300">
-                                        <input type="checkbox" class="w-4 h-4 mr-2">
-                                        <span class="text-lg dark:text-gray-400">One Plus</span>
-                                    </label>
-                                </li>
+                                @foreach( $brands as $brand )
+                                    <ul> <li class="mb-4" wire:key="{{ $brand->id }}">
+                                            <label for="{{ $brand->slug }}" class="flex items-center dark:text-gray-400 ">
+                                                <input type="checkbox" id="{{ $brand->slug }}" value="{{ $brand->id }}" class="w-4 h-4 mr-2">
+                                                <span class="text-lg">{{ $brand->name }}</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                @endforeach
                             </ul>
                         </div>
                         <div class="p-4 mb-5 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-900">
                             <h2 class="text-2xl font-bold dark:text-gray-400">Product Status</h2>
                             <div class="w-16 pb-2 mb-6 border-b border-rose-600 dark:border-gray-400"></div>
                             <ul>
+{{--                                @foreach( $Product as $brand )--}}
+{{--                                    <ul> <li class="mb-4" wire:key="{{ $brand->id }}">--}}
+{{--                                            <label for="{{ $brand->slug }}" class="flex items-center dark:text-gray-400 ">--}}
+{{--                                                <input type="checkbox" id="{{ $brand->slug }}" value="{{ $brand->id }}" class="w-4 h-4 mr-2">--}}
+{{--                                                <span class="text-lg">{{ $brand->name }}</span>--}}
+{{--                                            </label>--}}
+{{--                                        </li>--}}
+{{--                                    </ul>--}}
+{{--                                @endforeach--}}
                                 <li class="mb-4">
                                     <label for="" class="flex items-center dark:text-gray-300">
                                         <input type="checkbox" class="w-4 h-4 mr-2">
@@ -110,7 +95,7 @@
                         <div class="flex flex-wrap items-center ">
 
                            @foreach( $products as $product)
-                                <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3">
+                                <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3" wire:key="{{ $product->id }}">
                                     <div class="border border-gray-300 dark:border-gray-700">
                                         <div class="relative bg-gray-200">
                                             <a href="/products/{{$product->slug}}" class="">
@@ -147,58 +132,26 @@
                         <!-- pagination start -->
                         <div class="flex justify-end mt-6">
                             {{ $products->links() }}
-                            <!-- Pagination -->
-                            <!-- Pagination -->
                             <nav class="flex items-center -space-x-px" aria-label="Pagination">
-                                <button type="button" class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10" aria-label="Previous">
+                                <a href="{{ $products->previousPageUrl() }}" class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 @if($products->onFirstPage()) disabled:opacity-50 disabled:pointer-events-none @endif dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10" aria-label="Previous">
                                     <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="m15 18-6-6 6-6"></path>
                                     </svg>
                                     <span class="hidden sm:block">Previous</span>
-                                </button>
-                                <button type="button" class="min-h-[38px] min-w-[38px] flex justify-center items-center bg-gray-200 text-gray-800 border border-gray-200 py-2 px-3 text-sm first:rounded-s-lg last:rounded-e-lg focus:outline-none focus:bg-gray-300 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-600 dark:border-neutral-700 dark:text-white dark:focus:bg-neutral-500" aria-current="page">1</button>
-                                <button type="button" class="min-h-[38px] min-w-[38px] flex justify-center items-center border border-gray-200 text-gray-800 hover:bg-gray-100 py-2 px-3 text-sm first:rounded-s-lg last:rounded-e-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">2</button>
-                                <button type="button" class="min-h-[38px] min-w-[38px] flex justify-center items-center border border-gray-200 text-gray-800 hover:bg-gray-100 py-2 px-3 text-sm first:rounded-s-lg last:rounded-e-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">3</button>
-                                <button type="button" class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10" aria-label="Next">
+                                </a>
+                                @for ($i = 1; $i <= $products->lastPage(); $i++)
+                                    <a href="{{ $products->url($i) }}" class="min-h-[38px] min-w-[38px] flex justify-center items-center border border-gray-200 text-gray-800 hover:bg-gray-100 py-2 px-3 text-sm first:rounded-s-lg last:rounded-e-lg focus:outline-none focus:bg-gray-100 dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10 @if($i == $products->currentPage()) bg-gray-200 dark:bg-neutral-600 @endif" aria-current="{{ $i == $products->currentPage() ? 'page' : '' }}">
+                                        {{ $i }}
+                                    </a>
+                                @endfor
+                                <a href="{{ $products->nextPageUrl() }}" class="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 @if(!$products->hasMorePages()) disabled:opacity-50 disabled:pointer-events-none @endif dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10" aria-label="Next">
                                     <span class="hidden sm:block">Next</span>
                                     <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="m9 18 6-6-6-6"></path>
                                     </svg>
-                                </button>
+                                </a>
                             </nav>
-                            <!-- End Pagination -->
-                            <!-- End Pagination -->
-{{--                            <nav aria-label="page-navigation">--}}
-{{--                                <ul class="flex list-style-none">--}}
-{{--                                    <li class="page-item disabled ">--}}
-{{--                                        <a href="#" class="relative block pointer-events-none px-3 py-1.5 mr-3 text-base text-gray-700--}}
-{{--                                        transition-all duration-300  rounded-md dark:text-gray-400 hover:text-gray-100 hover:bg-blue-600">Previous--}}
-{{--                                        </a>--}}
-{{--                                    </li>--}}
-{{--                                    <li class="page-item ">--}}
-{{--                                        <a href="#" class="relative block px-3 py-1.5 mr-3 text-base hover:text-blue-700 transition-all--}}
-{{--                                        duration-300 hover:bg-blue-200 dark:hover:text-gray-400 dark:hover:bg-gray-700 rounded-md text-gray-100 bg-blue-400">1--}}
-{{--                                        </a>--}}
-{{--                                    </li>--}}
-{{--                                    <li class="page-item ">--}}
-{{--                                        <a href="#" class="relative block px-3 py-1.5 text-base text-gray-700 transition-all duration-300--}}
-{{--                                        dark:text-gray-400 dark:hover:bg-gray-700 hover:bg-blue-100 rounded-md mr-3  ">2--}}
-{{--                                        </a>--}}
-{{--                                    </li>--}}
-{{--                                    <li class="page-item ">--}}
-{{--                                        <a href="#" class="relative block px-3 py-1.5 text-base text-gray-700 transition-all duration-300--}}
-{{--                                        dark:text-gray-400 dark:hover:bg-gray-700 hover:bg-blue-100 rounded-md mr-3 ">3--}}
-{{--                                        </a>--}}
-{{--                                    </li>--}}
-{{--                                    <li class="page-item ">--}}
-{{--                                        <a href="#" class="relative block px-3 py-1.5 text-base text-gray-700 transition-all duration-300--}}
-{{--                                        dark:text-gray-400 dark:hover:bg-gray-700 hover:bg-blue-100 rounded-md ">Next--}}
-{{--                                        </a>--}}
-{{--                                    </li>--}}
-{{--                                </ul>--}}
-{{--                            </nav>--}}
                         </div>
-                        <!-- pagination end -->
                     </div>
                 </div>
             </div>

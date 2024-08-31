@@ -26,11 +26,11 @@ Route::get('/', HomePage::class);
 Route::get('/categories', CategoriesPage::class);
 Route::get('/products', ProductsPage::class);
 Route::get('/cart', CartPage::class);
-Route::get('/products{product}', ProductDetailPage::class);
+Route::get('/products/{slug}', ProductDetailPage::class);
 
 Route::get('/checkout', CheckoutPage::class);
 Route::get('/my-orders', MyOrdersPage::class);
-Route::get('/my-orders/{order}', MyOrderDetailPage::class);
+Route::get('/my-orders', MyOrderDetailPage::class);
 
 Route::get('/login', LoginPage::class);
 Route::get('/register', RegisterPage::class);
