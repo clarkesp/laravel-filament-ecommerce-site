@@ -32,7 +32,9 @@
                 <div class="w-full px-4 md:w-1/2">
                     <div class="lg:pl-20">
                         <div class="mb-8">
+
 {{--  FOR MARKDOWN EDITOR  <div class="mb-8" [&>ul]:list-disc [&>ul]:ml">--}}
+
                             <h2 class="max-w-xl mb-6 text-2xl font-bold dark:text-gray-400 md:text-4xl">
                                 {{ $product->name }}
                             </h2>
@@ -44,7 +46,9 @@
                             <p class="max-w-md text-gray-700 dark:text-gray-400" x-data="{ isExpanded: false }">
                                 <span x-show="!isExpanded">{{ \Illuminate\Support\Str::words($product->description, 100) }}...</span>
                                 <span x-show="isExpanded">{{ $product->description }}</span>
+
 {{-- FOR MARKDOWN EDITOR  TO HTML     {!! Str::markdown($product->description) !!}    --}}
+
                                 <button @click="isExpanded = !isExpanded" class="text-read-more hover:text-read-more-hover">
                                     <span x-show="!isExpanded">Read More</span>
                                     <span x-show="isExpanded">Read Less</span>
