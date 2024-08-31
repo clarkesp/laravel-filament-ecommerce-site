@@ -23,6 +23,8 @@ class ProductsPage extends Component
     public $featured = false;
     #[Url]
     public $onSale = false;
+    #[Url]
+    public $price_range = 100000;
 
     public function render()
     {
@@ -47,6 +49,10 @@ class ProductsPage extends Component
         // Apply on sale filter only if 'onSale' is true
         if ($this->onSale) {
             $productQuery->where('on_sale', true);
+        }
+
+        if ($this->price_range) {
+            $productQuery->whereBetween('price', [0, $this->price_range]);
         }
 
         return view('livewire.products-page', [

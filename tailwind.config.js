@@ -17,21 +17,21 @@ export default {
             '2xl': '1280px',
             '3xl': '1600px',
         },
-        colors: {
-            // 'blue': '#1fb6ff',
-            // 'purple': '#7e5bef',
-            // 'pink': '#ff49db',
-            // 'orange': '#ff7849',
-            // 'green': '#13ce66',
-            // 'yellow': '#ffc82c',
-            // 'gray-dark': '#273444',
-            // 'gray': '#8492a6',
-            // 'gray-light': '#d3dce6',
-        },
-        textColor: {
-            'read-more': '#980000',        // Default color for "Read"
-            'read-more-hover': '#980000',  // Hover color for "Read"
-        },
+        // colors: {
+        //     // 'blue': '#1fb6ff',
+        //     // 'purple': '#7e5bef',
+        //     // 'pink': '#ff49db',
+        //     // 'orange': '#ff7849',
+        //     // 'green': '#13ce66',
+        //     // 'yellow': '#ffc82c',
+        //     // 'gray-dark': '#273444',
+        //     // 'gray': '#8492a6',
+        //     // 'gray-light': '#d3dce6',
+        // },
+        // textColor: {
+        //     'read-more': '#980000',        // Default color for "Read"
+        //     'read-more-hover': '#980000',  // Hover color for "Read"
+        // },
         opacity: {
             // '0': '0',
             // '20': '0.2',
