@@ -1,4 +1,5 @@
-<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
+<div>
+    <div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
     <div class="flex h-full items-center">
         <main class="w-full max-w-md mx-auto p-6">
             <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
@@ -58,3 +59,5 @@
             </div>
     </div>
 </div>
+
+    <script src="./node_modules/preline/dist/preline.js"></script>
